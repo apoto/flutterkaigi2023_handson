@@ -11,6 +11,36 @@ class TicTacToe {
     this.currentPlayer,
   );
 
+  factory TicTacToe.fromJson(Map<String, dynamic> json) {
+    final flatBoard = List<String>.from(json['board']);
+
+    return TicTacToe(
+      // Firestore側を1次元配列にしているので、モデルの2次元配列とここで合わせる
+      [
+        List<String>.from(flatBoard.sublist(0, 3)),
+        List<String>.from(flatBoard.sublist(3, 6)),
+        List<String>.from(flatBoard.sublist(6, 9)),
+      ],
+      Players(
+        playerX: json['players']['playerX'],
+        playerO: json['players']['playerO'],
+      ),
+      json['currentPlayer'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      // モデルが2次元配列なので、Firestore側の1次元配列にここで合わせる
+      'board': [...board[0], ...board[1], ...board[2]],
+      'players': {
+        'playerX': players.playerX,
+        'playerO': players.playerO,
+      },
+      'currentPlayer': currentPlayer,
+    };
+  }
+
   factory TicTacToe.start({
     playerX = 'X',
     playerO = 'O',
