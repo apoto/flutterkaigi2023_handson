@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterkaigi2023_handson/model/tic_tac_toe.dart';
+import 'package:flutterkaigi2023_handson/provider/tic_tac_toe_provider.dart';
 
-class Board extends StatefulWidget {
-  const Board({super.key});
-
-  @override
-  State<Board> createState() => _BoardState();
-}
-
-class _BoardState extends State<Board> {
-  TicTacToe ticTacToe = TicTacToe.start(
-    playerX: 'Dash',
-    playerO: 'Sparky',
-  );
+class Board extends ConsumerWidget {
+  const Board({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ticTacToe = ref.watch(ticTacToeProvider);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -39,12 +33,11 @@ class _BoardState extends State<Board> {
 
               return GestureDetector(
                 onTap: () {
-                  setState(() {
-                    final winner = ticTacToe.getWinner();
-                    if (mark.isEmpty && winner.isEmpty) {
-                      ticTacToe = ticTacToe.placeMark(row, col);
-                    }
-                  });
+                  final winner = ticTacToe.getWinner();
+                  if (mark.isEmpty && winner.isEmpty) {
+                    ref.read(ticTacToeProvider.notifier).state =
+                        ticTacToe.placeMark(row, col);
+                  }
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -67,9 +60,8 @@ class _BoardState extends State<Board> {
             width: double.infinity,
             child: ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    ticTacToe = ticTacToe.resetBoard();
-                  });
+                  ref.read(ticTacToeProvider.notifier).state =
+                      ticTacToe.resetBoard();
                 },
                 child: const Text('ゲームをリセット')),
           ),
