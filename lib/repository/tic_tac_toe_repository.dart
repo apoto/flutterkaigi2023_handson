@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterkaigi2023_handson/model/tic_tac_toe.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final ticTacToeRepositoryProvider = AutoDisposeProvider<TicTacToeRepository>(
+  (ref) => TicTacToeRepository(),
+);
+
 final class TicTacToeRepository {
   TicTacToeRepository();
   final _client = FirebaseFirestore.instance;
